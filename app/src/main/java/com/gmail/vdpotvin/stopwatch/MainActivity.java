@@ -32,6 +32,9 @@ public class MainActivity extends Activity {
         if(button.getText() == getResources().getString(R.string.start)) {
             mStopwatch.start();
             button.setText(getResources().getString(R.string.stop));
+        } else {
+            mStopwatch.stop();
+            button.setText(getResources().getString(R.string.start));
         }
     }
 }
