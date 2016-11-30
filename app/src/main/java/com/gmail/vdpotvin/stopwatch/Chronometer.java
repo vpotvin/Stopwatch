@@ -9,7 +9,6 @@ package com.gmail.vdpotvin.stopwatch;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -75,19 +74,12 @@ public class Chronometer extends TextView {
      * Sets the base to the current time.
      */
     public Chronometer(Context context, AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
-    }
+        super(context, attrs, defStyleAttr, 0);
 
-    public Chronometer(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-
-        final TypedArray a = context.obtainStyledAttributes(
-                attrs, com.android.internal.R.styleable.Chronometer, defStyleAttr, defStyleRes);
-        setFormat(a.getString(com.android.internal.R.styleable.Chronometer_format));
-        a.recycle();
-
+        //Remove reference to Android internals - vp
         init();
     }
+
 
     private void init() {
         mBase = SystemClock.elapsedRealtime();
@@ -265,10 +257,9 @@ public class Chronometer extends TextView {
 
     //add value for seconds in milliseconds - vp
     private static final int SEC_IN_MILLI = 1000;
-    private static final int MIN_IN_SEC = 60;
-    private static final int HOUR_IN_SEC = MIN_IN_SEC*60;
-    private static String formatDuration(long ms) {
-        final Resources res = Resources.getSystem();
+    private static final int MIN_IN_MILLI = SEC_IN_MILLI * 60;
+    private static final int HOUR_IN_MILLI = MIN_IN_MILLI * 60;
+    /*private static String formatDuration(long ms) {
         final StringBuilder text = new StringBuilder();
 
         //don't divide duration into seconds - vp
@@ -277,19 +268,19 @@ public class Chronometer extends TextView {
             duration = -duration;
         }
 
-        //Add condition for calculating seconds
+        //Add condition for calculating seconds, edit calcs with new constants - vp
         int h = 0;
         int m = 0;
         int s = 0;
 
 
-        if (duration >= HOUR_IN_SEC) {
-            h = duration / HOUR_IN_SEC;
-            duration -= h * HOUR_IN_SEC;
+        if (duration >= HOUR_IN_MILLI) {
+            h = duration / HOUR_IN_MILLI;
+            duration -= h * HOUR_IN_MILLI;
         }
-        if (duration >= MIN_IN_SEC) {
-            m = duration / MIN_IN_SEC;
-            duration -= m * MIN_IN_SEC;
+        if (duration >= MIN_IN_MILLI) {
+            m = duration / MIN_IN_MILLI;
+            duration -= m * MIN_IN_MILLI;
         }
         if(duration >= SEC_IN_MILLI) {
             s = duration / SEC_IN_MILLI;
@@ -299,27 +290,14 @@ public class Chronometer extends TextView {
         int milli = duration;
 
         try {
-            if (h > 0) {
-                text.append(res.getQuantityString(
-                        com.android.internal.R.plurals.duration_hours, h, h));
-            }
-            if (m > 0) {
-                if (text.length() > 0) {
-                    text.append(' ');
-                }
-                text.append(res.getQuantityString(
-                        com.android.internal.R.plurals.duration_minutes, m, m));
-            }
-            if (s > 0) {
-                if (text.length() > 0) {
-                    text.append(' ');
-                }
-                text.append(res.getQuantityString(
-                        com.android.internal.R.plurals.duration_seconds, s, s));
-            }
-            if (text.length() > 0) {
-                text.append(' ');
-            }
+            //Change update text to match format of iOS stopwatch - vp
+            if(m > 9) text.append(Integer.toString(m));
+            else text.append("0" + Integer.toString(m));
+            text.append(':');
+
+            if(s > 9) text.append(Integer.toString(s));
+            else text.append("0" + Integer.toString(s));
+            text.append('.');
             text.append(milli);
 
         } catch (Resources.NotFoundException e) {
@@ -327,7 +305,7 @@ public class Chronometer extends TextView {
             return null;
         }
         return text.toString();
-    }
+    }*/
 
     @Override
     public CharSequence getContentDescription() {
