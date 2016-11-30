@@ -206,9 +206,9 @@ public class Chronometer extends TextView {
 
     private synchronized void updateText(long now) {
         mNow = now;
-        long seconds = now - mBase;
-        seconds /= 1000;
-        String text = DateUtils.formatElapsedTime(mRecycle, seconds);
+        long milliseconds = now - mBase;
+        milliseconds /= 100;
+        String text = DateUtils.formatElapsedTime(mRecycle, milliseconds);
 
         if (mFormat != null) {
             Locale loc = Locale.getDefault();
@@ -237,7 +237,8 @@ public class Chronometer extends TextView {
             if (running) {
                 updateText(SystemClock.elapsedRealtime());
                 dispatchChronometerTick();
-                mHandler.sendMessageDelayed(Message.obtain(mHandler, TICK_WHAT), 1000);
+                //Change tick to 100 - vp
+                mHandler.sendMessageDelayed(Message.obtain(mHandler, TICK_WHAT), 100);
             } else {
                 mHandler.removeMessages(TICK_WHAT);
             }
@@ -250,7 +251,8 @@ public class Chronometer extends TextView {
             if (mRunning) {
                 updateText(SystemClock.elapsedRealtime());
                 dispatchChronometerTick();
-                sendMessageDelayed(Message.obtain(this, TICK_WHAT), 1000);
+                //Change tick to 100 - vp
+                sendMessageDelayed(Message.obtain(this, TICK_WHAT), 100);
             }
         }
     };
@@ -261,19 +263,25 @@ public class Chronometer extends TextView {
         }
     }
 
+    //add value for seconds in milliseconds - vp
+    private static final int SEC_IN_MILLI = 1000;
     private static final int MIN_IN_SEC = 60;
     private static final int HOUR_IN_SEC = MIN_IN_SEC*60;
     private static String formatDuration(long ms) {
         final Resources res = Resources.getSystem();
         final StringBuilder text = new StringBuilder();
 
-        int duration = (int) (ms / DateUtils.SECOND_IN_MILLIS);
+        //don't divide duration into seconds - vp
+        int duration = (int) (ms);
         if (duration < 0) {
             duration = -duration;
         }
 
+        //Add condition for calculating seconds
         int h = 0;
         int m = 0;
+        int s = 0;
+
 
         if (duration >= HOUR_IN_SEC) {
             h = duration / HOUR_IN_SEC;
@@ -283,7 +291,12 @@ public class Chronometer extends TextView {
             m = duration / MIN_IN_SEC;
             duration -= m * MIN_IN_SEC;
         }
-        int s = duration;
+        if(duration >= SEC_IN_MILLI) {
+            s = duration / SEC_IN_MILLI;
+            duration -= s* SEC_IN_MILLI;
+        }
+
+        int milli = duration;
 
         try {
             if (h > 0) {
@@ -297,12 +310,18 @@ public class Chronometer extends TextView {
                 text.append(res.getQuantityString(
                         com.android.internal.R.plurals.duration_minutes, m, m));
             }
-
+            if (s > 0) {
+                if (text.length() > 0) {
+                    text.append(' ');
+                }
+                text.append(res.getQuantityString(
+                        com.android.internal.R.plurals.duration_seconds, s, s));
+            }
             if (text.length() > 0) {
                 text.append(' ');
             }
-            text.append(res.getQuantityString(
-                    com.android.internal.R.plurals.duration_seconds, s, s));
+            text.append(milli);
+
         } catch (Resources.NotFoundException e) {
             // Ignore; plurals throws an exception for an untranslated quantity for a given locale.
             return null;
