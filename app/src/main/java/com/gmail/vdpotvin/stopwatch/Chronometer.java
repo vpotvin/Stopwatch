@@ -95,37 +95,9 @@ public class Chronometer extends TextView {
         return mBase;
     }
 
-    /**
-     * Sets the format string used for display.  The Chronometer will display
-     * this string, with the first "%s" replaced by the current timer value in
-     * "MM:SS" or "H:MM:SS" form.
-     *
-     * If the format string is null, or if you never call setFormat(), the
-     * Chronometer will simply display the timer value in "MM:SS" or "H:MM:SS"
-     * form.
-     *
-     * @param format the format string.
-     */
 
-    public void setFormat(String format) {
-        mFormat = format;
-        if (format != null && mFormatBuilder == null) {
-            mFormatBuilder = new StringBuilder(format.length() * 2);
-        }
-    }
 
-    /**
-     * Returns the current format string as set through {@link #setFormat}.
-     */
-    public String getFormat() {
-        return mFormat;
-    }
 
-    /**
-     * Sets the listener to be called when the chronometer changes.
-     *
-     * @param listener The listener.
-     */
     public void setOnChronometerTickListener(OnChronometerTickListener listener) {
         mOnChronometerTickListener = listener;
     }
@@ -200,10 +172,10 @@ public class Chronometer extends TextView {
         int minutes = (int) (elapsed / MIN_IN_MILLI);
         int remaining = (int) (elapsed % MIN_IN_MILLI);
 
-        int seconds = (remaining / SEC_IN_MILLI);
-        remaining = (seconds % SEC_IN_MILLI);
+        int seconds = remaining / SEC_IN_MILLI;
+        remaining = remaining % SEC_IN_MILLI;
 
-        int milliseconds = remaining;
+        int milliseconds = remaining / 10;
 
         text += df.format(minutes);
         text += ":";
@@ -301,9 +273,5 @@ public class Chronometer extends TextView {
         return formatDuration(mNow - mBase);
     }*/
 
-    @Override
-    public CharSequence getAccessibilityClassName() {
-        return android.widget.Chronometer.class.getName();
-    }
 }
 
