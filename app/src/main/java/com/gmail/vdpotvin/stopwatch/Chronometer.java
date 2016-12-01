@@ -35,13 +35,23 @@ public class Chronometer extends TextView {
     }
 
     private long mBase;
+
+
+
     private long mNow; // the currently displayed time
+    private long stopTime; //the time the chronometer was stopped
+    private long lapTime; // the time a lap was recorded.
     private boolean mVisible;
     private boolean mStarted;
     private boolean mRunning;
-    private String mFormat;
     private StringBuilder mFormatBuilder;
     private OnChronometerTickListener mOnChronometerTickListener;
+
+    //getter for laps -vp
+    public long getLap() {
+        return mNow;
+    }
+
 
     private static final int TICK_WHAT = 2;
 
@@ -166,12 +176,17 @@ public class Chronometer extends TextView {
     private synchronized void updateText(long now) {
         mNow = now;
         long elapsed = now - mBase;
+
+        setText(getTimeAsString(elapsed));
+    }
+
+    private String getTimeAsString(long time) {
         DecimalFormat df = new DecimalFormat("00");
 
         String text = "";
 
-        int minutes = (int) (elapsed / MIN_IN_MILLI);
-        int remaining = (int) (elapsed % MIN_IN_MILLI);
+        int minutes = (int) (time / MIN_IN_MILLI);
+        int remaining = (int) (time % MIN_IN_MILLI);
 
         int seconds = remaining / SEC_IN_MILLI;
         remaining = remaining % SEC_IN_MILLI;
@@ -183,9 +198,7 @@ public class Chronometer extends TextView {
         text += df.format(seconds);
         text += ".";
         text += df.format(milliseconds);
-
-
-        setText(text);
+        return text;
     }
 
     private void updateRunning() {

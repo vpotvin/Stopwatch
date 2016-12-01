@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
             @Override
             public void onChronometerTick(Chronometer chronometer) {
                 if(!laps.isEmpty()) {
-                    laps.get(0).setTime(stopwatch.getText().toString());
+                    laps.get(0).setTime(stopwatch.getmNow());
                 }
             }
         });
@@ -68,7 +68,7 @@ public class MainActivity extends Activity {
         Button button = (Button) view;
         String lapString = getResources().getString(lap);
         if(button.getText() == lapString) {
-            laps.add(0, new Lap(lapString + " " + laps.size() + 1, stopwatch.getText().toString()));
+            laps.add(0, new Lap(stopwatch.getmNow(), lapString + " " + (laps.size()+1)));
             adapter.notifyDataSetChanged();
         } else {
             laps.clear();

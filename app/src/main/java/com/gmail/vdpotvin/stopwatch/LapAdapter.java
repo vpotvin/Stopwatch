@@ -32,7 +32,7 @@ public class LapAdapter extends ArrayAdapter<Lap> {
         TextView lapTimeText = (TextView) convertView.findViewById(R.id.lap_time_text);
 
         lapCountText.setText(lap.getLapCount());
-        lapTimeText.setText(lap.getTime());
+        lapTimeText.setText(lap.getTimeString());
 
         return convertView;
     }
