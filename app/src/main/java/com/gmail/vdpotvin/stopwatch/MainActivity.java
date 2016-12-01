@@ -59,22 +59,26 @@ public class MainActivity extends Activity {
             if(!baseSet) {
                 stopwatch.setBase(SystemClock.elapsedRealtime());
                 baseSet = true;
-                lapResetButton.setText(getResources().getString(
-                        R.string.lap
-                ));
             }
 
             stopwatch.start();
 
             if(laps.isEmpty()) {
                 laps.add(new Lap(stopwatch.getLap(true),
-                        getResources().getString(R.string.lap) + "1"));
+                        getResources().getString(R.string.lap) + " 1"));
             }
 
+
+            lapResetButton.setText(getResources().getString(
+                    R.string.lap
+            ));
             button.setText(getResources().getString(R.string.stop));
+            setButtonRed();
+
         } else {
             stopwatch.stop();
             button.setText(getResources().getString(R.string.start));
+            setButtonGreen();
             lapResetButton.setText(
                     getResources().getString(R.string.reset));
         }
@@ -93,5 +97,15 @@ public class MainActivity extends Activity {
             baseSet = false;
             lapResetButton.setText(getResources().getString(R.string.lap));
         }
+    }
+
+    private void setButtonGreen(){
+        startStopButton.setBackground(getDrawable(R.drawable.button_round_green));
+        startStopButton.setTextColor(getColor(R.color.grn_button_text));
+    }
+
+    private void setButtonRed() {
+        startStopButton.setBackground(getDrawable(R.drawable.button_round_red));
+        startStopButton.setTextColor(getColor(R.color.red_button_text));
     }
 }

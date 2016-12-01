@@ -1,12 +1,19 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="StopwatchTheme">
+    <style name="AppTheme" parent="android:Theme.Material">
         <!-- Customize your theme here. -->
+        <item name="android:colorPrimary">@color/primary_material_dark</item>
+        <item name="android:colorBackground">@android:color/black</item>
+
     </style>
 
-    <style name="StopwatchTheme" parent="android:Theme.Material.NoActionBar" >
-        <item name="android:colorPrimary">@android:color/black</item>
+    <style name="buttonStyle" parent="android:Widget.Button">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="buttonGreenStyle" parent="android:Widget.Button">
+        <item name="android:textColor">@color/grn_button_text</item>
     </style>
 
 </resources>
