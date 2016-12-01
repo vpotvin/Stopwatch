@@ -2,7 +2,9 @@ package com.gmail.vdpotvin.stopwatch;
 
 /**
  * Created by vdpotvin on 11/30/16.
- * Edited Android Chronometer Widget to count in milliseconds
+ * Edited Android Chronometer Widget to count in milliseconds.
+ * Some localization and formatting features lost due to inability to access internal resources.
+ * Formatting is app-specific for the Stopwatch.
  */
 
 
@@ -161,7 +163,14 @@ public class Chronometer extends TextView {
     //add value for seconds in milliseconds - vp
     private static final int SEC_IN_MILLI = 1000;
     private static final int MIN_IN_MILLI = SEC_IN_MILLI * 60;
+    //ToDo: determine if hours option is needed
     private static final int HOUR_IN_MILLI = MIN_IN_MILLI * 60;
+
+    /*
+    Integral change from Android Chronometer. Had this method been public I would have simply
+    extended the class. Completely rewritten to correctly account for milliseconds and return the
+    results in a formatted string.
+     */
     private synchronized void updateText(long now) {
         mNow = now;
         long elapsed = now - mBase;
@@ -218,60 +227,6 @@ public class Chronometer extends TextView {
             mOnChronometerTickListener.onChronometerTick(this);
         }
     }
-
-
-    /*private static String formatDuration(long ms) {
-        final StringBuilder text = new StringBuilder();
-
-        //don't divide duration into seconds - vp
-        int duration = (int) (ms);
-        if (duration < 0) {
-            duration = -duration;
-        }
-
-        //Add condition for calculating seconds, edit calcs with new constants - vp
-        int h = 0;
-        int m = 0;
-        int s = 0;
-
-
-        if (duration >= HOUR_IN_MILLI) {
-            h = duration / HOUR_IN_MILLI;
-            duration -= h * HOUR_IN_MILLI;
-        }
-        if (duration >= MIN_IN_MILLI) {
-            m = duration / MIN_IN_MILLI;
-            duration -= m * MIN_IN_MILLI;
-        }
-        if(duration >= SEC_IN_MILLI) {
-            s = duration / SEC_IN_MILLI;
-            duration -= s* SEC_IN_MILLI;
-        }
-
-        int milli = duration;
-
-        try {
-            //Change update text to match format of iOS stopwatch - vp
-            if(m > 9) text.append(Integer.toString(m));
-            else text.append("0" + Integer.toString(m));
-            text.append(':');
-
-            if(s > 9) text.append(Integer.toString(s));
-            else text.append("0" + Integer.toString(s));
-            text.append('.');
-            text.append(milli);
-
-        } catch (Resources.NotFoundException e) {
-            // Ignore; plurals throws an exception for an untranslated quantity for a given locale.
-            return null;
-        }
-        return text.toString();
-    }*/
-
-   /* @Override
-    public CharSequence getContentDescription() {
-        return formatDuration(mNow - mBase);
-    }*/
 
 }
 
