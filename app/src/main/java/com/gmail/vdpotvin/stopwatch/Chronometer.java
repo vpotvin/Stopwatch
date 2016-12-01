@@ -8,7 +8,7 @@ package com.gmail.vdpotvin.stopwatch;
  */
 
 
-
+//ToDo: Bug where chronometer does not properly stop.
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -122,6 +122,7 @@ public class Chronometer extends TextView {
      */
     public void start() {
         mStarted = true;
+        mNow = SystemClock.elapsedRealtime();
         updateRunning();
     }
 
