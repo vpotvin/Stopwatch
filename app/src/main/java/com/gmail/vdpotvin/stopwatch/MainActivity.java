@@ -67,7 +67,7 @@ public class MainActivity extends Activity {
         } else {
             laps.clear();
             adapter.notifyDataSetChanged();
-            
+
         }
     }
 }
