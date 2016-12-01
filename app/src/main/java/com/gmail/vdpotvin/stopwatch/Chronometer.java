@@ -3,12 +3,10 @@ package com.gmail.vdpotvin.stopwatch;
 /**
  * Created by vdpotvin on 11/30/16.
  * Edited Android Chronometer Widget to count in milliseconds.
- * Some localization and formatting features lost due to inability to access internal resources.
  * Formatting is app-specific for the Stopwatch.
+ * Added functionality for tracking laps.
  */
 
-
-//ToDo: Bug where chronometer does not properly stop.
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -44,10 +42,7 @@ public class Chronometer extends TextView {
     private boolean mStarted;
     private boolean mRunning;
     private boolean paused;
-    private StringBuilder mFormatBuilder;
     private OnChronometerTickListener mOnChronometerTickListener;
-
-
 
 
     private static final int TICK_WHAT = 2;
@@ -75,7 +70,6 @@ public class Chronometer extends TextView {
     public Chronometer(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr, 0);
 
-        //Remove reference to Android internals - vp
         init();
     }
 
@@ -87,11 +81,7 @@ public class Chronometer extends TextView {
         updateText(mBase);
     }
 
-    /**
-     * Set the time that the count-up timer is in reference to.
-     *
-     * @param base Use the {@link SystemClock#elapsedRealtime} time base.
-     */
+
 
     public void setBase(long base) {
         mBase = base;
@@ -99,9 +89,8 @@ public class Chronometer extends TextView {
         updateText(SystemClock.elapsedRealtime());
     }
 
-    /**
-     * Return the base time as set through {@link #setBase}.
-     */
+
+
     public long getBase() {
         return mBase;
     }
@@ -113,33 +102,18 @@ public class Chronometer extends TextView {
         mOnChronometerTickListener = listener;
     }
 
-    /**
-     * @return The listener (may be null) that is listening for chronometer change
-     *         events.
-     */
+
     public OnChronometerTickListener getOnChronometerTickListener() {
         return mOnChronometerTickListener;
     }
 
-    /**
-     * Start counting up.  This does not affect the base as set from {@link #setBase}, just
-     * the view display.
-     *
-     * Chronometer works by regularly scheduling messages to the handler, even when the
-     * Widget is not visible.  To make sure resource leaks do not occur, the user should
-     * make sure that each start() call has a reciprocal call to {@link #stop}.
-     */
     public void start() {
         mStarted = true;
         updateRunning();
     }
 
     /**
-     * Stop counting up.  This does not affect the base as set from {@link #setBase}, just
-     * the view display.
-     *
-     * This stops the messages to the handler, effectively releasing resources that would
-     * be held as the chronometer is running, via {@link #start}.
+     * Edited to include boolean value paused. Original configuration kept counting while stopped.
      */
     public void stop() {
         mStarted = false;
@@ -150,7 +124,7 @@ public class Chronometer extends TextView {
     //get lap formatted as a string.
     public String getLap(boolean lapClick) {
         String lap;
-        if(lapTime !=0) lap = getTimeAsString(mNow - lapTime);
+        if(lapTime != 0) lap = getTimeAsString(mNow - lapTime);
         else lap = getTimeAsString(mNow - mBase);
         if(lapClick) lapTime = mNow;
         return lap;
@@ -174,13 +148,10 @@ public class Chronometer extends TextView {
     //add value for seconds in milliseconds - vp
     private static final int SEC_IN_MILLI = 1000;
     private static final int MIN_IN_MILLI = SEC_IN_MILLI * 60;
-    //ToDo: determine if hours option is needed
-    private static final int HOUR_IN_MILLI = MIN_IN_MILLI * 60;
 
     /*
     Integral change from Android Chronometer. Had this method been public I would have simply
-    extended the class. Completely rewritten to correctly account for milliseconds and return the
-    results in a formatted string.
+    extended the class.
      */
     private synchronized void updateText(long now) {
         mNow = now;
@@ -189,6 +160,9 @@ public class Chronometer extends TextView {
         setText(getTimeAsString(elapsed));
     }
 
+    /*
+    Custom method that returns a long as a String in the format "mm:ss.SS"
+     */
     private String getTimeAsString(long time) {
         DecimalFormat df = new DecimalFormat("00");
 

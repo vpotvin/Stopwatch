@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
     public void onStartStopClick(View view) {
         Button button = (Button) view;
 
-        if(button.getText() == getResources().getString(R.string.start)) {
+        if(button.getText() == getResources().getString(R.string.start)) {      //Start Button logic
             if(!baseSet) {
                 stopwatch.setBase(SystemClock.elapsedRealtime());
                 baseSet = true;
@@ -75,7 +75,7 @@ public class MainActivity extends Activity {
             button.setText(getResources().getString(R.string.stop));
             setButtonRed();
 
-        } else {
+        } else {                                                                //Stop Button Logic
             stopwatch.stop();
             button.setText(getResources().getString(R.string.start));
             setButtonGreen();
@@ -87,10 +87,10 @@ public class MainActivity extends Activity {
     public void onLapResetClick(View view) {
         Button button = (Button) view;
         String lapString = getResources().getString(lap);
-        if(button.getText() == lapString) {
+        if(button.getText() == lapString) {                                             //Lap logic
             laps.add(0, new Lap(stopwatch.getLap(true), lapString + " " + (laps.size() + 1)));
             adapter.notifyDataSetChanged();
-        } else {
+        } else {                                                                      //Reset logic
             laps.clear();
             adapter.notifyDataSetChanged();
             stopwatch.setText("00:00.00");
