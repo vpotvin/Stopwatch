@@ -8,18 +8,13 @@ package com.gmail.vdpotvin.stopwatch;
 
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.text.format.DateUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.TextView;
 
-import java.util.Formatter;
-import java.util.IllegalFormatException;
-import java.util.Locale;
+import java.text.DecimalFormat;
 
 
 public class Chronometer extends TextView {
@@ -42,14 +37,9 @@ public class Chronometer extends TextView {
     private boolean mVisible;
     private boolean mStarted;
     private boolean mRunning;
-    private boolean mLogged;
     private String mFormat;
-    private Formatter mFormatter;
-    private Locale mFormatterLocale;
-    private Object[] mFormatterArgs = new Object[1];
     private StringBuilder mFormatBuilder;
     private OnChronometerTickListener mOnChronometerTickListener;
-    private StringBuilder mRecycle = new StringBuilder(8);
 
     private static final int TICK_WHAT = 2;
 
@@ -196,30 +186,32 @@ public class Chronometer extends TextView {
         updateRunning();
     }
 
+    //add value for seconds in milliseconds - vp
+    private static final int SEC_IN_MILLI = 1000;
+    private static final int MIN_IN_MILLI = SEC_IN_MILLI * 60;
+    private static final int HOUR_IN_MILLI = MIN_IN_MILLI * 60;
     private synchronized void updateText(long now) {
         mNow = now;
-        long milliseconds = now - mBase;
-        milliseconds /= 100;
-        String text = DateUtils.formatElapsedTime(mRecycle, milliseconds);
+        long elapsed = now - mBase;
+        DecimalFormat df = new DecimalFormat("00");
 
-        if (mFormat != null) {
-            Locale loc = Locale.getDefault();
-            if (mFormatter == null || !loc.equals(mFormatterLocale)) {
-                mFormatterLocale = loc;
-                mFormatter = new Formatter(mFormatBuilder, loc);
-            }
-            mFormatBuilder.setLength(0);
-            mFormatterArgs[0] = text;
-            try {
-                mFormatter.format(mFormat, mFormatterArgs);
-                text = mFormatBuilder.toString();
-            } catch (IllegalFormatException ex) {
-                if (!mLogged) {
-                    Log.w(TAG, "Illegal format string: " + mFormat);
-                    mLogged = true;
-                }
-            }
-        }
+        String text = "";
+
+        int minutes = (int) (elapsed / MIN_IN_MILLI);
+        int remaining = (int) (elapsed % MIN_IN_MILLI);
+
+        int seconds = (remaining / SEC_IN_MILLI);
+        remaining = (seconds % SEC_IN_MILLI);
+
+        int milliseconds = remaining;
+
+        text += df.format(minutes);
+        text += ":";
+        text += df.format(seconds);
+        text += ".";
+        text += df.format(milliseconds);
+
+
         setText(text);
     }
 
@@ -255,10 +247,7 @@ public class Chronometer extends TextView {
         }
     }
 
-    //add value for seconds in milliseconds - vp
-    private static final int SEC_IN_MILLI = 1000;
-    private static final int MIN_IN_MILLI = SEC_IN_MILLI * 60;
-    private static final int HOUR_IN_MILLI = MIN_IN_MILLI * 60;
+
     /*private static String formatDuration(long ms) {
         final StringBuilder text = new StringBuilder();
 
@@ -307,10 +296,10 @@ public class Chronometer extends TextView {
         return text.toString();
     }*/
 
-    @Override
+   /* @Override
     public CharSequence getContentDescription() {
         return formatDuration(mNow - mBase);
-    }
+    }*/
 
     @Override
     public CharSequence getAccessibilityClassName() {
