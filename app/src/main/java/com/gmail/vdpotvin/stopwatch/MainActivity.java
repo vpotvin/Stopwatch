@@ -19,11 +19,14 @@ public class MainActivity extends Activity {
     private List<Lap> laps;
     private ArrayAdapter<Lap> adapter;
     private ListView lapListView;
+    private boolean baseSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        baseSet = false;
 
         laps = new ArrayList<>();
         adapter = new LapAdapter(this, laps);
@@ -47,7 +50,10 @@ public class MainActivity extends Activity {
         Button button = (Button) view;
 
         if(button.getText() == getResources().getString(R.string.start)) {
-            stopwatch.setBase(SystemClock.elapsedRealtime());
+            if(!baseSet) {
+                stopwatch.setBase(SystemClock.elapsedRealtime());
+                baseSet = true;
+            }
             stopwatch.start();
             button.setText(getResources().getString(R.string.stop));
         } else {
@@ -67,7 +73,8 @@ public class MainActivity extends Activity {
         } else {
             laps.clear();
             adapter.notifyDataSetChanged();
-
+            stopwatch.setText("00:00.00");
+            baseSet = false;
         }
     }
 }

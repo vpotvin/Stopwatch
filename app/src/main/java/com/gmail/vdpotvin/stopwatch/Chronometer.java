@@ -122,7 +122,6 @@ public class Chronometer extends TextView {
      */
     public void start() {
         mStarted = true;
-        mNow = SystemClock.elapsedRealtime();
         updateRunning();
     }
 
@@ -138,14 +137,6 @@ public class Chronometer extends TextView {
         updateRunning();
     }
 
-    /**
-     * The same as calling {@link #start} or {@link #stop}.
-     * @hide pending API council approval
-     */
-    public void setStarted(boolean started) {
-        mStarted = started;
-        updateRunning();
-    }
 
     @Override
     protected void onDetachedFromWindow() {
