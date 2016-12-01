@@ -1,8 +1,12 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
+    <style name="AppTheme" parent="StopwatchTheme">
         <!-- Customize your theme here. -->
+    </style>
+
+    <style name="StopwatchTheme" parent="android:Theme.Material.NoActionBar" >
+        <item name="android:colorPrimary">@android:color/black</item>
     </style>
 
 </resources>
