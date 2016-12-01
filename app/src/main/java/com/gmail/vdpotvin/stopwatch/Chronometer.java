@@ -47,10 +47,7 @@ public class Chronometer extends TextView {
     private StringBuilder mFormatBuilder;
     private OnChronometerTickListener mOnChronometerTickListener;
 
-    //getter for laps -vp
-    public long getLap() {
-        return mNow;
-    }
+
 
 
     private static final int TICK_WHAT = 2;
@@ -77,7 +74,7 @@ public class Chronometer extends TextView {
      */
     public Chronometer(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr, 0);
-
+        lapTime = 0;
         //Remove reference to Android internals - vp
         init();
     }
@@ -144,7 +141,17 @@ public class Chronometer extends TextView {
      */
     public void stop() {
         mStarted = false;
+        stopTime = mNow;
         updateRunning();
+    }
+
+    //get lap formatted as a string.
+    public String getLap(boolean lapClick) {
+        String lap;
+        if(lapTime !=0) lap = getTimeAsString(mNow - lapTime);
+        else lap = getTimeAsString(mNow - mBase);
+        if(lapClick) lapTime = mNow;
+        return lap;
     }
 
 

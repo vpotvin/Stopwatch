@@ -20,6 +20,8 @@ public class MainActivity extends Activity {
     private ArrayAdapter<Lap> adapter;
     private ListView lapListView;
     private boolean baseSet;
+    private Button startStopButton;
+    private Button lapResetButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +35,9 @@ public class MainActivity extends Activity {
         lapListView = (ListView) findViewById(R.id.lap_list);
         lapListView.setAdapter(adapter);
 
+        startStopButton = (Button) findViewById(R.id.start_stop_btn);
+        lapResetButton = (Button) findViewById(R.id.lap_reset_btn);
+
 
 
         stopwatch = (Chronometer) findViewById(R.id.stopwatch_text);
@@ -40,7 +45,8 @@ public class MainActivity extends Activity {
             @Override
             public void onChronometerTick(Chronometer chronometer) {
                 if(!laps.isEmpty()) {
-                    laps.get(0).setTime(stopwatch.getmNow());
+                    laps.get(0).setTime(stopwatch.getLap(false));
+                    adapter.notifyDataSetChanged();
                 }
             }
         });
@@ -53,13 +59,23 @@ public class MainActivity extends Activity {
             if(!baseSet) {
                 stopwatch.setBase(SystemClock.elapsedRealtime());
                 baseSet = true;
+                lapResetButton.setText(getResources().getString(
+                        R.string.lap
+                ));
             }
+
             stopwatch.start();
+
+            if(laps.isEmpty()) {
+                laps.add(new Lap(stopwatch.getLap(true),
+                        getResources().getString(R.string.lap) + "1"));
+            }
+
             button.setText(getResources().getString(R.string.stop));
         } else {
             stopwatch.stop();
             button.setText(getResources().getString(R.string.start));
-            ((Button) findViewById(R.id.lap_reset_btn)).setText(
+            lapResetButton.setText(
                     getResources().getString(R.string.reset));
         }
     }
@@ -68,13 +84,14 @@ public class MainActivity extends Activity {
         Button button = (Button) view;
         String lapString = getResources().getString(lap);
         if(button.getText() == lapString) {
-            laps.add(0, new Lap(stopwatch.getmNow(), lapString + " " + (laps.size()+1)));
+            laps.add(0, new Lap(stopwatch.getLap(true), lapString + " " + (laps.size() + 1)));
             adapter.notifyDataSetChanged();
         } else {
             laps.clear();
             adapter.notifyDataSetChanged();
             stopwatch.setText("00:00.00");
             baseSet = false;
+            lapResetButton.setText(getResources().getString(R.string.lap));
         }
     }
 }
