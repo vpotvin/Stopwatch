@@ -39,11 +39,11 @@ public class Chronometer extends TextView {
 
 
     private long mNow; // the currently displayed time
-    private long stopTime; //the time the chronometer was stopped
     private long lapTime; // the time a lap was recorded.
     private boolean mVisible;
     private boolean mStarted;
     private boolean mRunning;
+    private boolean paused;
     private StringBuilder mFormatBuilder;
     private OnChronometerTickListener mOnChronometerTickListener;
 
@@ -74,7 +74,7 @@ public class Chronometer extends TextView {
      */
     public Chronometer(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr, 0);
-        lapTime = 0;
+
         //Remove reference to Android internals - vp
         init();
     }
@@ -82,6 +82,8 @@ public class Chronometer extends TextView {
 
     private void init() {
         mBase = SystemClock.elapsedRealtime();
+        lapTime = 0;
+        paused = false;
         updateText(mBase);
     }
 
@@ -141,7 +143,7 @@ public class Chronometer extends TextView {
      */
     public void stop() {
         mStarted = false;
-        stopTime = mNow;
+        paused = true;
         updateRunning();
     }
 
@@ -212,7 +214,15 @@ public class Chronometer extends TextView {
         boolean running = mVisible && mStarted;
         if (running != mRunning) {
             if (running) {
-                updateText(SystemClock.elapsedRealtime());
+                long now = SystemClock.elapsedRealtime();
+                long difference = now - mNow;
+                if(paused) {
+                    mBase += difference;
+                    lapTime += difference;
+                    updateText(now);
+                    paused = false;
+                }
+                else updateText(now);
                 dispatchChronometerTick();
                 //Change tick to 100 - vp
                 mHandler.sendMessageDelayed(Message.obtain(mHandler, TICK_WHAT), 100);
@@ -226,7 +236,15 @@ public class Chronometer extends TextView {
     private Handler mHandler = new Handler() {
         public void handleMessage(Message m) {
             if (mRunning) {
-                updateText(SystemClock.elapsedRealtime());
+                long now = SystemClock.elapsedRealtime();
+                long difference = now - mNow;
+                if(paused) {
+                    mBase += difference;
+                    lapTime += difference;
+                    updateText(now);
+                    paused = false;
+                }
+                else updateText(now);
                 dispatchChronometerTick();
                 //Change tick to 100 - vp
                 sendMessageDelayed(Message.obtain(this, TICK_WHAT), 100);
