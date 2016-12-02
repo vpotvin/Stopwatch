@@ -148,6 +148,7 @@ public class Chronometer extends TextView {
     //add value for seconds in milliseconds - vp
     private static final int SEC_IN_MILLI = 1000;
     private static final int MIN_IN_MILLI = SEC_IN_MILLI * 60;
+    private static final int HOUR_IN_MILLI = MIN_IN_MILLI * 60;
 
     /*
     Integral change from Android Chronometer. Had this method been public I would have simply
@@ -167,9 +168,16 @@ public class Chronometer extends TextView {
         DecimalFormat df = new DecimalFormat("00");
 
         String text = "";
+        int remaining;
+
+        int hours = (int) (time / HOUR_IN_MILLI);
+        if(hours > 0) {
+            text += df.format(hours);
+            text += ":";
+        }
 
         int minutes = (int) (time / MIN_IN_MILLI);
-        int remaining = (int) (time % MIN_IN_MILLI);
+        remaining = (int) (time % MIN_IN_MILLI);
 
         int seconds = remaining / SEC_IN_MILLI;
         remaining = remaining % SEC_IN_MILLI;
@@ -199,7 +207,7 @@ public class Chronometer extends TextView {
                 else updateText(now);
                 dispatchChronometerTick();
                 //Change tick to 100 - vp
-                mHandler.sendMessageDelayed(Message.obtain(mHandler, TICK_WHAT), 100);
+                mHandler.sendMessageDelayed(Message.obtain(mHandler, TICK_WHAT), 10);
             } else {
                 mHandler.removeMessages(TICK_WHAT);
             }
@@ -221,7 +229,7 @@ public class Chronometer extends TextView {
                 else updateText(now);
                 dispatchChronometerTick();
                 //Change tick to 100 - vp
-                sendMessageDelayed(Message.obtain(this, TICK_WHAT), 100);
+                sendMessageDelayed(Message.obtain(this, TICK_WHAT), 10);
             }
         }
     };
